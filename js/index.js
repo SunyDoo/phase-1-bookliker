@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", ()=> {
     getAllBooks()
+    let currentUser = {
+        id: 11,
+        username: "sunil"
+    }
 //fetch all books
     function getAllBooks(){
         fetch ('http://localhost:3000/books')
@@ -22,6 +26,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         item.addEventListener('click', displayBook)
 //function that displays all of book properties under the div
         function displayBook(){
+            let likedBook = false
             const panel = document.getElementById('show-panel')
             panel.innerHTML = `
             <img src="${bookObj.img_url}"/>
@@ -29,19 +34,28 @@ document.addEventListener("DOMContentLoaded", ()=> {
             <h2>${bookObj.subtitle}</h2>
             <h3>${bookObj.author}</h3>
             <p> ${bookObj.description} Likes</p>
-            <ul>
-            ${bookObj.users.map(user=>`<li>${user.username}</li>`).join('')}
+            <ul class = 'likeList'>
+            ${bookObj.users.map(user=>{
+                if (user.username === currentUser.username){
+                    likedBook = true
+                }
+                return `<li>${user.username}</li>`}).join('')
+            }
             </ul>
-            <button id='${bookObj.id}'>Like ❤️</button>
+            <button id='${bookObj.id}'>${likedBook ? 'Unlike 💔':'Like ❤️'}</button>
             `
             panel.addEventListener('click', addLike)
             function addLike(e){                
                 if (e.target.innerText == 'Like ❤️'){
-                                                          
+                    // const newLike = document.createElement('li')
+                    // const likeList = document.getElementsByClassName('likeList')
+                    // console.log(likeList)
+                    // likeList.innerHTML = `<li>${currentUser.username}</li>`
+                    // // likeList.appendChild(newLike)                                                          
                     const id = e.target.id
                     patchBook(e).then (book=>{
                         const users = book.users
-                        const body = { users: [...users, {"id": 1,"username":"pouros"}]}                        
+                        const body = { users: [...users, currentUser]}                        
                         changeLikes(id)
                         function changeLikes(id){
                             fetch (`http://localhost:3000/books/${id}`,{
@@ -57,6 +71,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
                         }
                         e.target.innerText = 'Unlike 💔'
                     })
+                    displayBook()
                                         
                 }
                 // else if (e.target.innerText == 'Unlike 💔'){
@@ -72,10 +87,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
 
 
 
-                // let newUser = {
-                //     id: 1,
-                //     username: "pouros"
-                // }
+                
 
 //event listener for like button
 
