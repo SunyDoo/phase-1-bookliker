@@ -47,17 +47,46 @@ document.addEventListener("DOMContentLoaded", ()=> {
             <button id='${bookObj.id}'>${likedBook ? 'Unlike 💔':'Like ❤️'}</button>
             `
             panel.addEventListener('click', addLike)
-            function addLike(e){                
-                if (e.target.innerText == 'Like ❤️'){
-                    console.log(e.target)
-                    debugger
-                    e.target.innerText = 'Unlike 💔'                                                         
+            function addLike(e){   
+                const li = document.createElement('li')
+                e.target.previousElementSibling.append(li)
+                // debugger
+                const users = bookObj.users
+                let body = { 
+                    users: [...users]
+                }
+                if (e.target.innerText == 'Like ❤️'){                    
+                    li.innerText = currentUser.username
+                    e.target.innerText = 'Unlike 💔'
+                    body = { 
+                        users: [...users, currentUser]
+                    }                                                         
                     const id = e.target.id
-                    patchBook(e).then (book=>{
-                        const users = book.users
-                        const body = { users: [...users, currentUser]
+                    // debugger
+                    patchBook(e).then (book=>{                                                
+                        changeLikes(book.id)
+                        function changeLikes(id){
+                            fetch (`http://localhost:3000/books/${id}`,{
+                                method: 'PATCH',
+                                headers:{
+                                    "Content-Type": "application/json",
+                                    Accept: "application/json"
+                                },
+                                body: JSON.stringify(body)
+                            })
+                            .then(res=>res.json())
+                            .then(book=>console.log(book))
+                            // debugger
                         }                        
-                        changeLikes(id)
+                    })
+                }
+                else if (e.target.innerText == 'Unlike 💔'){
+                    e.target.innerText = 'Like ❤️'                    
+                    body = { 
+                        users: [...users]
+                    }
+                    patchBook(e).then (book=>{
+                        changeLikes(book.id)
                         function changeLikes(id){
                             fetch (`http://localhost:3000/books/${id}`,{
                                 method: 'PATCH',
@@ -71,16 +100,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
                             .then(book=>console.log(book))
                         }                        
                     })
-                    // return                                       
-                }
-                // else if (e.target.innerText == 'Unlike 💔'){
-                //     e.target.innerText = 'Like ❤️'
-                // }                
+                }                
             }       
         }
     }
-
-
 });
 
 
