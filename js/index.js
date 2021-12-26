@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
         item.textContent = bookObj.title
         item.addEventListener('click', displayBook)
 //function that displays all of book properties under the div
-        function displayBook(book){
+        function displayBook(){
             let likedBook = false            
             panel.innerHTML = `
             <img src="${bookObj.img_url}"/>
@@ -48,7 +48,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
             `
             panel.addEventListener('click', addLike)
             function addLike(e){                
-                if (e.target.innerText == 'Like ❤️'){                                                          
+                if (e.target.innerText == 'Like ❤️'){
+                    console.log(e.target)
+                    debugger
+                    e.target.innerText = 'Unlike 💔'                                                         
                     const id = e.target.id
                     patchBook(e).then (book=>{
                         const users = book.users
@@ -65,7 +68,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
                                 body: JSON.stringify(body)
                             })
                             .then(res=>res.json())
-                            .then(book=>displayBook(book))
+                            .then(book=>console.log(book))
                         }                        
                     })
                     // return                                       
