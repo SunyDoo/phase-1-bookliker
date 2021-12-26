@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
                .then (res=>(res.json()))
     }
     
+    
 //render one book to the DOM
     function renderOneBook(bookObj){
         const bookList = document.getElementById('list')
@@ -46,17 +47,11 @@ document.addEventListener("DOMContentLoaded", ()=> {
             `
             panel.addEventListener('click', addLike)
             function addLike(e){                
-                if (e.target.innerText == 'Like ❤️'){
-                    // const newLike = document.createElement('li')
-                    // const likeList = document.getElementsByClassName('likeList')
-                    // console.log(likeList)
-                    // likeList.innerHTML = `<li>${currentUser.username}</li>`
-                    // // likeList.appendChild(newLike)                                                          
+                if (e.target.innerText == 'Like ❤️'){                                                          
                     const id = e.target.id
                     patchBook(e).then (book=>{
                         const users = book.users
-                        const body = { users: [...users, currentUser]}                        
-                        changeLikes(id)
+                        const body = { users: [...users, currentUser]}
                         function changeLikes(id){
                             fetch (`http://localhost:3000/books/${id}`,{
                                 method: 'PATCH',
@@ -68,16 +63,15 @@ document.addEventListener("DOMContentLoaded", ()=> {
                             })
                             .then(res=>res.json())
                             .then(book=>console.log(book))
-                        }
+                        }                        
+                        changeLikes(id)                        
                         e.target.innerText = 'Unlike 💔'
                     })
-                    displayBook()
-                                        
+                    return displayBook(e)                                      
                 }
                 // else if (e.target.innerText == 'Unlike 💔'){
                 //     e.target.innerText = 'Like ❤️'
-                // }
-                
+                // }                
             }       
         }
     }
@@ -102,3 +96,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
         //     userItem.innerHTML = `<li>${user}</li>`
         //     panel.appendChild(userItem)
         //     }
+
+                            // const newLike = document.createElement('li')
+                    // const likeList = document.getElementsByClassName('likeList')
+                    // console.log(likeList)
+                    // likeList.innerHTML = `<li>${currentUser.username}</li>`
+                    // // likeList.appendChild(newLike)
