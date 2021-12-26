@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
         id: 11,
         username: "sunil"
     }
+    const panel = document.getElementById('show-panel')
+    panel.innerHTML=''
 //fetch all books
     function getAllBooks(){
         fetch ('http://localhost:3000/books')
@@ -26,9 +28,8 @@ document.addEventListener("DOMContentLoaded", ()=> {
         item.textContent = bookObj.title
         item.addEventListener('click', displayBook)
 //function that displays all of book properties under the div
-        function displayBook(){
-            let likedBook = false
-            const panel = document.getElementById('show-panel')
+        function displayBook(book){
+            let likedBook = false            
             panel.innerHTML = `
             <img src="${bookObj.img_url}"/>
             <h2>${bookObj.title}</h2>
@@ -51,7 +52,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
                     const id = e.target.id
                     patchBook(e).then (book=>{
                         const users = book.users
-                        const body = { users: [...users, currentUser]}
+                        const body = { users: [...users, currentUser]
+                        }                        
+                        changeLikes(id)
                         function changeLikes(id){
                             fetch (`http://localhost:3000/books/${id}`,{
                                 method: 'PATCH',
@@ -62,12 +65,10 @@ document.addEventListener("DOMContentLoaded", ()=> {
                                 body: JSON.stringify(body)
                             })
                             .then(res=>res.json())
-                            .then(book=>console.log(book))
+                            .then(book=>displayBook(book))
                         }                        
-                        changeLikes(id)                        
-                        e.target.innerText = 'Unlike 💔'
                     })
-                    return displayBook(e)                                      
+                    // return                                       
                 }
                 // else if (e.target.innerText == 'Unlike 💔'){
                 //     e.target.innerText = 'Like ❤️'
